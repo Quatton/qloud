@@ -58,7 +58,7 @@ export default function Home() {
           resize-none
           text-3xl
         "
-        ></textarea>
+        />
       </div>
     </div>
   );
