@@ -1,59 +1,65 @@
-import styles from '../styles/Home.module.css'
+import {
+  ChangeEventHandler,
+  KeyboardEventHandler,
+  useEffect,
+  useState,
+} from "react";
+import styles from "../styles/Home.module.css";
 
 export default function Home() {
+  const [pressedKey, setPressedKey] = useState("");
+  const delay = 3000;
+
+  const resetTextArea = () => {
+    setTextareaValue("");
+  };
+
+  const keypressHandler: KeyboardEventHandler<HTMLTextAreaElement> = (
+    event
+  ) => {
+    setPressedKey(event.code);
+
+    if (event.code === "Enter") {
+      event.preventDefault();
+      resetTextArea();
+      return;
+    }
+  };
+
+  const [textareaValue, setTextareaValue] = useState("");
+  const textareaChangeHandler: ChangeEventHandler<HTMLTextAreaElement> = (
+    event
+  ) => {
+    setTextareaValue(event.target.value);
+  };
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      resetTextArea();
+    }, delay);
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [textareaValue]);
+
   return (
-    <div className={styles.container}>
-      <main className={styles.main}>
-        <h1 className={styles.title}>
-          Welcome to <a href="https://nextjs.org">Next.js!</a>
-        </h1>
-
-        <p className={styles.description}>
-          Get started by editing{' '}
-          <code className={styles.code}>pages/index.js</code>
-        </p>
-
-        <div className={styles.grid}>
-          <a href="https://nextjs.org/docs" className={styles.card}>
-            <h3>Documentation &rarr;</h3>
-            <p>Find in-depth information about Next.js features and API.</p>
-          </a>
-
-          <a href="https://nextjs.org/learn" className={styles.card}>
-            <h3>Learn &rarr;</h3>
-            <p>Learn about Next.js in an interactive course with quizzes!</p>
-          </a>
-
-          <a
-            href="https://github.com/vercel/next.js/tree/canary/examples"
-            className={styles.card}
-          >
-            <h3>Examples &rarr;</h3>
-            <p>Discover and deploy boilerplate example Next.js projects.</p>
-          </a>
-
-          <a
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-          >
-            <h3>Deploy &rarr;</h3>
-            <p>
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </p>
-          </a>
-        </div>
-      </main>
-
-      <footer className={styles.footer}>
-        <a
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Powered by{' '}
-          <img src="/vercel.svg" alt="Vercel Logo" className={styles.logo} />
-        </a>
-      </footer>
+    <div className="h-screen py-2 flex flex-col justify-center items-center">
+      <div className="px-8 flex-1 flex flex-col justify-center items-center">
+        <textarea
+          name="textarea"
+          id="textarea"
+          cols={30}
+          rows={10}
+          onKeyDown={keypressHandler}
+          onChange={textareaChangeHandler}
+          value={textareaValue}
+          className="
+          focus:outline-none
+          resize-none
+          text-3xl
+        "
+        ></textarea>
+      </div>
     </div>
-  )
+  );
 }
