@@ -20,5 +20,5 @@ a {
 }
 
 .textarea {
-  @apply bg-transparent focus:outline-none resize-none text-3xl p-5;
+  @apply font-mono bg-transparent focus:outline-none resize-none text-3xl p-5;
 }
