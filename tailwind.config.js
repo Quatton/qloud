@@ -5,7 +5,21 @@ module.exports = {
     "./components/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      animation: {
+        "exit-up": "exit-up 2s ease-out forwards",
+      },
+      keyframes: {
+        "exit-up": {
+          from: { opacity: 100 },
+          to: {
+            transform: "translateY(-5rem)",
+            opacity: 0,
+            display: "none",
+          },
+        },
+      },
+    },
   },
   plugins: [],
 };

@@ -18,3 +18,7 @@ a {
 * {
   box-sizing: border-box;
 }
+
+.textarea {
+  @apply bg-transparent focus:outline-none resize-none text-3xl p-5;
+}
