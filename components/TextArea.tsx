@@ -1,13 +1,11 @@
 import React, {
   ChangeEventHandler,
   KeyboardEventHandler,
-  LegacyRef,
   MutableRefObject,
   useEffect,
   useRef,
   useState,
 } from "react";
-import { text } from "stream/consumers";
 import FadeOutText from "./FadeOut";
 
 type Props = {
@@ -22,7 +20,8 @@ export default function TextArea({ active }: Props) {
   const DELAY = 3000;
   const MAXCH = 300;
 
-  const textareaRef: LegacyRef<HTMLTextAreaElement> = useRef(null);
+  const textareaRef: MutableRefObject<HTMLTextAreaElement | null> =
+    useRef(null);
   useEffect(() => {
     prevCountRef.current = new Array<PrevCount>();
     textareaRef.current && textareaRef.current.focus();
@@ -39,14 +38,11 @@ export default function TextArea({ active }: Props) {
   };
 
   const resetTextArea = () => {
-    if (textareaValue.length) {
+    if (textareaValue.length && textareaRef?.current) {
       prevCountRef.current.push([
         Date.now(),
         textareaValue,
-        parseInt(
-          (textareaRef as MutableRefObject<HTMLTextAreaElement>).current.style
-            .fontSize
-        ),
+        parseInt(textareaRef.current.style.fontSize),
       ]);
       setTextareaValue("");
     }

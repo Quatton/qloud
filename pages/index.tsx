@@ -1,26 +1,34 @@
 import { MouseEventHandler, useEffect, useState } from "react";
 import Layout from "../components/Layout";
-import TextArea from "../components/TextArea";
+import TextAreaComponent from "../components/TextArea";
 
 export default function Home() {
   const [textareaActive, setTextareaActive] = useState(false);
-  const [buttonDisplay, setButtonDisplay] = useState("");
-  const buttonClickHandler: MouseEventHandler<HTMLButtonElement> = (event) => {
+
+  const buttonClickHandler: MouseEventHandler<HTMLButtonElement> = (e) => {
     setTextareaActive(true);
   };
+
+  useEffect(() => {
+    addEventListener("keypress", (e) => {
+      if (e.key === "") setTextareaActive(false);
+      if (e.key === "Enter") setTextareaActive(true);
+    });
+  }, []);
 
   return (
     <Layout>
       <button
         onClick={buttonClickHandler}
-        className={`absolute button primary-button ${
-          textareaActive && "animate-fade-out-up select-none"
-        } ${buttonDisplay}`}
-        onAnimationEnd={(e) => setButtonDisplay("none")}
+        className={`absolute button primary-button select-none ${
+          textareaActive
+            ? "animate-fade-out-up disabled"
+            : "animate-fade-in-down"
+        } `}
       >
         Begin Session
       </button>
-      <TextArea active={textareaActive} />
+      <TextAreaComponent active={textareaActive} />
     </Layout>
   );
 }
