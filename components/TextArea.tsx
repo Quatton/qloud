@@ -74,8 +74,8 @@ export default function TextArea({ active }: Props) {
   }
 
   return (
-    <>
-      <p className="text-right text-gray-500">
+    <div className="w-full h-full flex flex-col justify-center items-center">
+      <p className="self-end mr-16 text-gray-500">
         {textareaValue.length}/{MAXCH}
       </p>
 
@@ -104,6 +104,6 @@ export default function TextArea({ active }: Props) {
           />
         );
       })}
-    </>
+    </div>
   );
 }
