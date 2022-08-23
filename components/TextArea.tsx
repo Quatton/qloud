@@ -1,20 +1,29 @@
 import React, {
   ChangeEventHandler,
+  Dispatch,
   KeyboardEventHandler,
   MutableRefObject,
+  SetStateAction,
   useEffect,
   useRef,
   useState,
 } from "react";
+import { useLocalStorage } from "../utils/Storage";
 import FadeOutText from "./FadeOut";
 
 type Props = {
   active: boolean;
+  saveState: [Session[], (value: Session[]) => void];
+};
+
+export type Session = {
+  id: number;
+  data: string[];
 };
 
 type PrevCount = [number, string, number];
 
-export default function TextArea({ active }: Props) {
+export default function TextArea({ active, saveState }: Props) {
   if (!active) return null;
 
   const DELAY = 3000;
@@ -37,12 +46,21 @@ export default function TextArea({ active }: Props) {
     setTextareaValue(event.target.value);
   };
 
+  const [sessions, setSessions] = saveState;
+
   const resetTextArea = () => {
     if (textareaValue.length && textareaRef?.current) {
       prevCountRef.current.push([
         Date.now(),
         textareaValue,
         parseInt(textareaRef.current.style.fontSize),
+      ]);
+      setSessions([
+        ...sessions.slice(0, sessions.length - 1),
+        {
+          id: sessions[sessions.length - 1].id,
+          data: [...sessions[sessions.length - 1].data, textareaValue],
+        },
       ]);
       setTextareaValue("");
     }

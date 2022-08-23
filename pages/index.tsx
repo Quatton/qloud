@@ -1,20 +1,42 @@
 import { MouseEventHandler, useEffect, useState } from "react";
 import Layout from "../components/Layout";
-import TextAreaComponent from "../components/TextArea";
+import TextAreaComponent, { Session } from "../components/TextArea";
+import { useLocalStorage } from "../utils/Storage";
 
 export default function Home() {
   const [textareaActive, setTextareaActive] = useState(false);
 
   const buttonClickHandler: MouseEventHandler<HTMLButtonElement> = (e) => {
-    setTextareaActive(true);
+    if (!textareaActive) {
+      e.preventDefault();
+      setSessions([...sessions, { id: sessionId, data: [] }]);
+      setTextareaActive(true);
+    }
   };
 
+  const [sessions, setSessions] = useLocalStorage<Session[]>("sessions", []);
+  const sessionId = Date.now();
   useEffect(() => {
+    // for saving after session ends
+
     addEventListener("keypress", (e) => {
-      if (e.key === "") setTextareaActive(false);
-      if (e.key === "Enter") setTextareaActive(true);
+      if (textareaActive && e.key === "") {
+        e.preventDefault();
+        setTextareaActive(false);
+      }
+
+      // return key doesn't actually work
+      if (!textareaActive && e.key === "Enter") {
+        e.preventDefault();
+        setSessions([...sessions, { id: sessionId, data: [] }]);
+        setTextareaActive(true);
+      }
+
+      return () => {
+        removeEventListener("keypress", () => {});
+      };
     });
-  }, []);
+  }, [textareaActive]);
 
   return (
     <Layout>
@@ -28,7 +50,10 @@ export default function Home() {
       >
         Begin Session
       </button>
-      <TextAreaComponent active={textareaActive} />
+      <TextAreaComponent
+        saveState={[sessions, setSessions]}
+        active={textareaActive}
+      />
     </Layout>
   );
 }
