@@ -7,10 +7,10 @@ module.exports = {
   theme: {
     extend: {
       animation: {
-        "exit-up": "exit-up 2s ease-out forwards",
+        "fade-out-up": "fade-out-up 2s ease-out forwards",
       },
       keyframes: {
-        "exit-up": {
+        "fade-out-up": {
           from: { opacity: 100 },
           to: {
             transform: "translateY(-5rem)",

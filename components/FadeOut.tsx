@@ -5,7 +5,7 @@ type Props = {
   onAnimationEnd: AnimationEventHandler<HTMLTextAreaElement>;
 };
 
-function FadeOut({ previousValue, onAnimationEnd }: Props) {
+function FadeOutText({ previousValue, onAnimationEnd }: Props) {
   return (
     <textarea
       name="textarea"
@@ -13,17 +13,17 @@ function FadeOut({ previousValue, onAnimationEnd }: Props) {
       cols={30}
       rows={10}
       value={previousValue}
-      className="
+      className={`
         textarea
         absolute
-        animate-exit-up
+        animate-fade-out-up
         select-none
         -z-40
-        "
+        `}
       readOnly
       onAnimationEnd={onAnimationEnd}
     />
   );
 }
 
-export default memo(FadeOut);
+export default memo(FadeOutText);

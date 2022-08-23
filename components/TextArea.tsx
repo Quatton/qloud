@@ -2,20 +2,52 @@ import React, {
   ChangeEventHandler,
   KeyboardEventHandler,
   LegacyRef,
+  MutableRefObject,
   useEffect,
   useRef,
   useState,
 } from "react";
-import FadeOut from "./FadeOut";
+import { text } from "stream/consumers";
+import FadeOutText from "./FadeOut";
 
-type Props = {};
+type Props = {
+  active: boolean;
+};
 
-export default function TextArea({}: Props) {
-  const delay = 3000;
+type PrevCount = [number, string, number];
+
+export default function TextArea({ active }: Props) {
+  if (!active) return null;
+
+  const DELAY = 3000;
+  const MAXCH = 300;
+
+  const textareaRef: LegacyRef<HTMLTextAreaElement> = useRef(null);
+  useEffect(() => {
+    prevCountRef.current = new Array<PrevCount>();
+    textareaRef.current && textareaRef.current.focus();
+  }, []);
+
+  //for storing previousValue
+  const prevCountRef = useRef<PrevCount[]>([]);
+
+  const [textareaValue, setTextareaValue] = useState("");
+  const textareaChangeHandler: ChangeEventHandler<HTMLTextAreaElement> = (
+    event
+  ) => {
+    setTextareaValue(event.target.value);
+  };
 
   const resetTextArea = () => {
     if (textareaValue.length) {
-      prevCountRef.current.push([Date.now(), textareaValue]);
+      prevCountRef.current.push([
+        Date.now(),
+        textareaValue,
+        parseInt(
+          (textareaRef as MutableRefObject<HTMLTextAreaElement>).current.style
+            .fontSize
+        ),
+      ]);
       setTextareaValue("");
     }
   };
@@ -30,34 +62,27 @@ export default function TextArea({}: Props) {
     }
   };
 
-  const [textareaValue, setTextareaValue] = useState("");
-  const textareaChangeHandler: ChangeEventHandler<HTMLTextAreaElement> = (
-    event
-  ) => {
-    setTextareaValue(event.target.value);
-  };
-
   useEffect(() => {
     const timer = setTimeout(() => {
       resetTextArea();
-    }, delay);
+    }, DELAY);
     return () => {
       clearTimeout(timer);
     };
   }, [textareaValue]);
 
   //for autoFocus
-  const textareaRef: LegacyRef<HTMLTextAreaElement> = useRef(null);
-  useEffect(() => {
-    prevCountRef.current = [[Date.now(), ""]];
-    textareaRef.current && textareaRef.current.focus();
-  }, []);
 
-  //for storing previousValue
-  const prevCountRef = useRef<Array<[number, string]>>([[Date.now(), ""]]);
+  if (textareaValue.length >= MAXCH) {
+    resetTextArea();
+  }
 
   return (
     <>
+      <p className="text-right text-gray-500">
+        {textareaValue.length}/{MAXCH}
+      </p>
+
       <textarea
         name="textarea"
         id="textarea"
@@ -66,15 +91,15 @@ export default function TextArea({}: Props) {
         onKeyDown={keypressHandler}
         onChange={textareaChangeHandler}
         value={textareaValue}
-        className="
-          textarea
-          "
+        className={`
+        textarea transition-all ease-in-out
+        `}
         ref={textareaRef}
       />
 
-      {prevCountRef.current.map(([key, previousValue]) => {
+      {prevCountRef.current.map(([key, previousValue, originalFontSize]) => {
         return (
-          <FadeOut
+          <FadeOutText
             previousValue={previousValue}
             onAnimationEnd={() => {
               prevCountRef.current && prevCountRef.current.shift();

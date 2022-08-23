@@ -20,5 +20,13 @@ a {
 }
 
 .textarea {
-  @apply font-mono bg-transparent focus:outline-none resize-none text-3xl p-5;
+  @apply w-full max-w-3xl h-3/5 p-8 font-mono bg-transparent focus:outline-none resize-none overflow-clip text-3xl outline-none;
+}
+
+.button {
+  @apply font-mono rounded text-xl px-4 py-2;
+}
+
+.primary-button {
+  @apply bg-sky-200 text-gray-700;
 }
