@@ -23,6 +23,8 @@ export default function Home() {
       if (textareaActive && e.key === "") {
         e.preventDefault();
         setTextareaActive(false);
+        if (!sessions[sessions.length - 1].data.length)
+          setSessions(sessions.slice(0, sessions.length - 1));
       }
 
       // return key doesn't actually work
