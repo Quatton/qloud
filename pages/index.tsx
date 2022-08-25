@@ -11,7 +11,7 @@ export default function Home() {
   const [buttonActive, setButtonActive] = useState(true);
 
   const savedToast = () =>
-    toast.success("🦄 Wow so easy!", {
+    toast.success("Saved!", {
       position: "top-center",
       autoClose: 750,
       hideProgressBar: true,
@@ -69,6 +69,7 @@ export default function Home() {
   return (
     <Layout>
       <ToastContainer
+        limit={1}
         position="top-center"
         autoClose={750}
         hideProgressBar
