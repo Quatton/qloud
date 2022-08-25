@@ -21,7 +21,6 @@ function FadeOutText({ previousValue, onAnimationEnd }: Props) {
       ref={textareaRef}
       contentEditable
       spellCheck
-      style={{ fontSize }}
     >
       {previousValue}
     </div>

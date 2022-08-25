@@ -9,7 +9,6 @@ import React, {
   useRef,
   useState,
 } from "react";
-import useFitText from "use-fit-text";
 import { useLocalStorage } from "../utils/Storage";
 import FadeOutText from "./FadeOut";
 
@@ -22,13 +21,15 @@ export type Session = {
   data: string[];
 };
 
-type PrevCount = [number, string, number];
+type PrevCount = [number, string];
 
 export default function TextArea({ textareaActiveState }: Props) {
   //ref
 
   //for storing previousValue
   const prevCountRef = useRef<PrevCount[]>([]);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
   //state
   const [textareaValue, setTextareaValue] = useState("");
   const [textareaActive, setTextareaActive] = textareaActiveState;
@@ -47,11 +48,7 @@ export default function TextArea({ textareaActiveState }: Props) {
     const saveText = textareaValue.trim();
     if (textareaValue.length && textareaRef?.current) {
       // previous value animation
-      prevCountRef.current.push([
-        Date.now(),
-        saveText,
-        parseInt(textareaRef.current.style.fontSize),
-      ]);
+      prevCountRef.current.push([Date.now(), saveText]);
 
       // save in session
       setSessions([
@@ -90,11 +87,15 @@ export default function TextArea({ textareaActiveState }: Props) {
   }
 
   // handlers
-  const textareaChangeHandler: ChangeEventHandler<HTMLDivElement> = (event) => {
-    setTextareaValue(event.target.innerText);
+  const textareaChangeHandler: ChangeEventHandler<HTMLTextAreaElement> = (
+    event
+  ) => {
+    setTextareaValue(event.target.value);
   };
 
-  const keypressHandler: KeyboardEventHandler<HTMLDivElement> = (event) => {
+  const keypressHandler: KeyboardEventHandler<HTMLTextAreaElement> = (
+    event
+  ) => {
     if (event.code === "Enter") {
       event.preventDefault();
       submitTextArea();
@@ -116,31 +117,26 @@ export default function TextArea({ textareaActiveState }: Props) {
         <p className="z-40 text-gray-500 font-italic">(CTRL+Q)</p>
 
         <p className="z-40  text-gray-500 ml-auto">
-          {textareaValue.length}/{MAXCH} {fontSize}
+          {textareaValue.length}/{MAXCH}
         </p>
       </div>
 
-      <div className="animate-fade-in-down relative h-full w-full">
-        <div
-          data-placeholder={
-            sessions[index]?.data?.length === 0 && !textareaValue
-              ? "Enter Title"
-              : ""
-          }
+      <div className="relative h-full w-full">
+        <textarea
+          name="textarea"
+          id="textarea"
+          placeholder={sessions[index]?.data?.length === 0 ? "Enter Title" : ""}
           onKeyDown={keypressHandler}
-          onInput={textareaChangeHandler}
+          onChange={textareaChangeHandler}
+          value={textareaValue}
           className={`
-            textarea before:content-[attr(data-placeholder)] before:text-gray-400 before:absolute
+            textarea
           `}
           ref={textareaRef}
-          contentEditable
           spellCheck
-          style={{ fontSize }}
-        >
-          {textareaValue}
-        </div>
+        />
 
-        {prevCountRef.current.map(([key, previousValue, originalFontSize]) => {
+        {prevCountRef.current.map(([key, previousValue]) => {
           return (
             <FadeOutText
               previousValue={previousValue}
