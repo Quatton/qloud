@@ -18,7 +18,10 @@ export default function Layout({ children }: Props) {
   const [loading, setLoading] = useState(false);
 
   return (
-    <div className="h-screen overflow-y-auto flex flex-col justify-center items-center">
+    <div
+      className="
+      h-screen overflow-y-auto flex flex-col justify-center items-center"
+    >
       <div className="w-full p-4 flex gap-2">
         <ArrowLeftIcon
           className="icon"

@@ -1,6 +1,7 @@
 import _ from "lodash";
-import React, { Suspense, useEffect } from "react";
+import React, { Suspense } from "react";
 import Layout from "../../components/Layout";
+import Loading from "../../components/Loading";
 import PageCard from "../../components/PageCard";
 import { Session } from "../../components/TextArea";
 import { useLocalStorage } from "../../utils/Storage";
@@ -15,7 +16,7 @@ export default function Pages({}: Props) {
 
   return (
     <Layout>
-      <Suspense fallback={<h1>Loading</h1>}>
+      <Suspense fallback={<Loading />}>
         <div className="w-full h-full flex flex-col p-2 sm:p-4 overflow-y-auto">
           {sessions.length ? (
             sessions.map((props) => <PageCard key={props.id} {...props} />)
