@@ -22,7 +22,7 @@ export default function Pages({}: Props) {
       <div className="p-4 w-full h-full flex flex-col items-start font-mono overflow-y-auto">
         <h1 className="text-4xl mb-4">{data[0]}</h1>
         {data.slice(1).map((text, i) => (
-          <li className={`break-words text-2xl list-disc`}>{text}</li>
+          <li className={`break-words text-2xl max-w-full`}>{text}</li>
         ))}
       </div>
     </Layout>

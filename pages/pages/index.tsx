@@ -16,7 +16,7 @@ export default function Pages({}: Props) {
   return (
     <Layout>
       <Suspense fallback={<h1>Loading</h1>}>
-        <div className="w-full h-full flex flex-col p-4 sm:p-8 overflow-y-auto">
+        <div className="w-full h-full flex flex-col p-2 sm:p-4 overflow-y-auto">
           {sessions.length ? (
             sessions.map((props) => <PageCard key={props.id} {...props} />)
           ) : (
