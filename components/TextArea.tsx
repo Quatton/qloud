@@ -88,9 +88,11 @@ export default function TextArea({ sessionState, endSession }: Props) {
     setTextareaValue(event.target.value);
   };
 
+  const [keypress, setKeypress] = useState("");
   const keypressHandler: KeyboardEventHandler<HTMLTextAreaElement> = (
     event
   ) => {
+    setKeypress(event.key);
     if (event.key === "Enter") {
       event.preventDefault();
       submitTextArea();
@@ -125,7 +127,7 @@ export default function TextArea({ sessionState, endSession }: Props) {
             textarea ${
               textareaValue.length > 18
                 ? "text-xl sm:text-7xl"
-                : "text-6xl sm:text-9xl"
+                : "text-4xl sm:text-9xl"
             }
           `}
           ref={textareaRef}

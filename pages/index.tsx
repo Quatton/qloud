@@ -42,13 +42,11 @@ export default function Home() {
   };
 
   const [sessions, setSessions] = useLocalStorage<Session[]>("sessions", []);
-  const [keypress, setKeypress] = useState("");
+
   useEffect(() => {
     // for saving after session ends
 
     addEventListener("keypress", (e) => {
-      setKeypress(e.key);
-
       if (textareaActive && e.key === "") {
         e.preventDefault();
         endSession();
@@ -80,8 +78,6 @@ export default function Home() {
         draggable={false}
         pauseOnHover={false}
       />
-
-      {keypress}
 
       {buttonActive && (
         <button
