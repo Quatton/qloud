@@ -6,6 +6,7 @@ import { useLocalStorage } from "../utils/Storage";
 
 export default function Home() {
   const [textareaActive, setTextareaActive] = useState(false);
+  const [buttonActive, setButtonActive] = useState(true);
 
   const buttonClickHandler: MouseEventHandler<HTMLButtonElement> = (e) => {
     if (!textareaActive) {
@@ -49,20 +50,20 @@ export default function Home() {
 
   return (
     <Layout>
-      <p className="absolute z-40 top-24 invisible">
-        {keypress || 0} {sessionId || 0}{" "}
-        {sessions[sessions.length - 1]?.id || 0}
-      </p>
-      <button
-        onClick={buttonClickHandler}
-        className={`absolute button primary-button select-none ${
-          textareaActive
-            ? "animate-fade-out-up disabled"
-            : "animate-fade-in-down"
-        } `}
-      >
-        Begin Session
-      </button>
+      {buttonActive && (
+        <button
+          onClick={buttonClickHandler}
+          className={`absolute button primary-button select-none ${
+            textareaActive
+              ? "animate-fade-out-up disabled"
+              : "animate-fade-in-down"
+          } `}
+          onAnimationEnd={() => buttonActive || setButtonActive(false)}
+        >
+          Begin Session
+        </button>
+      )}
+
       {textareaActive && sessionId > 0 && (
         <TextAreaComponent
           sessionId={sessionId}

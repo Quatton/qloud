@@ -23,18 +23,19 @@ export default function PageCard({ id, data }: Props) {
       <div
         className="
         w-full flex flex-row justify-between 
-        px-2 md:px-4 py-2 border-b border-b-sky-200 cursor-pointer
+        border-b border-b-sky-200 cursor-pointer
         transition-all hover:scale-x-[1.005] hover:bg-sky-50
+
+        p-4 md:px-8
+        text-xl 
         "
       >
-        <h1 className="justify-self-start self-start text-sm sm:text-xl font-semibold">
+        <h1 className="">
           {window.innerWidth > 768
             ? format(new Date(id), `${dateOptions.ymd} ${timeFormat}`)
             : format(new Date(id), `${dateOptions.ymdS} ${timeFormat}`)}
         </h1>
-        <h1 className="truncate ... font-semibold text-sm sm:text-xl">
-          {data[0] || "No data"}
-        </h1>
+        <h1 className="truncate ... max-w-[50%]">{data[0] || "No data"}</h1>
       </div>
     </Link>
   );

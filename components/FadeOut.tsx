@@ -3,9 +3,14 @@ import React, { AnimationEventHandler, memo, useState } from "react";
 type Props = {
   previousValue: string;
   onAnimationEnd: AnimationEventHandler<HTMLTextAreaElement>;
+  originalFontSize: number;
 };
 
-function FadeOutText({ previousValue, onAnimationEnd }: Props) {
+function FadeOutText({
+  previousValue,
+  onAnimationEnd,
+  originalFontSize,
+}: Props) {
   return (
     <textarea
       name="textarea"
@@ -18,6 +23,7 @@ function FadeOutText({ previousValue, onAnimationEnd }: Props) {
         select-none
         -z-40
         `}
+      style={{ fontSize: originalFontSize }}
       readOnly
       onAnimationEnd={onAnimationEnd}
     />

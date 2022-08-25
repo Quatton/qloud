@@ -10,6 +10,7 @@ import React, {
   useRef,
   useState,
 } from "react";
+import useFitText from "use-fit-text";
 import { useLocalStorage } from "../utils/Storage";
 import FadeOutText from "./FadeOut";
 
@@ -23,51 +24,78 @@ export type Session = {
   data: string[];
 };
 
-type PrevCount = [number, string, number];
+type PrevCount = [number, string];
 
 export default function TextArea({ textareaActiveState, sessionId }: Props) {
-  const [textareaActive, setTextareaActive] = textareaActiveState;
+  //ref
+  const { fontSize, ref: fitTextRef } = useFitText();
 
-  const [sessions, setSessions] = useLocalStorage<Session[]>("sessions", []);
-
-  const DELAY = 3000;
-  const MAXCH = 300;
-
+  //for storing previousValue
+  const prevCountRef = useRef<PrevCount[]>([]);
   const textareaRef: MutableRefObject<HTMLTextAreaElement | null> =
     useRef(null);
+
+  //state
+  const [textareaValue, setTextareaValue] = useState("");
+  const [textareaActive, setTextareaActive] = textareaActiveState;
+
+  //localStorage
+  const [sessions, setSessions] = useLocalStorage<Session[]>("sessions", []);
+
+  //constant
+  const DELAY = 3000;
+  const MAXCH = 300;
+  // resetTextArea
+  const index = sessions.length - 1;
+
+  //submit
+  const submitTextArea = () => {
+    const saveText = textareaValue.trim();
+    if (textareaValue.length && textareaRef?.current) {
+      // previous value animation
+      prevCountRef.current.push([Date.now(), saveText]);
+
+      // save in session
+      setSessions([
+        ...sessions.slice(0, index),
+        {
+          ...sessions[index],
+          data: [...sessions[index].data, saveText],
+        },
+        ...sessions.slice(index + 1),
+      ]);
+
+      // empty
+      setTextareaValue("");
+    }
+  };
+
+  // when content hydrates
   useEffect(() => {
     prevCountRef.current = new Array<PrevCount>();
     textareaRef.current && textareaRef.current.focus();
   }, []);
 
-  //for storing previousValue
-  const prevCountRef = useRef<PrevCount[]>([]);
+  // timeout submit
+  useEffect(() => {
+    const submitTimer = setTimeout(() => {
+      submitTextArea();
+    }, DELAY);
+    return () => {
+      clearTimeout(submitTimer);
+    };
+  }, [textareaValue]);
 
-  const [textareaValue, setTextareaValue] = useState("");
+  // force submit if exceeded
+  if (textareaValue.length >= MAXCH) {
+    submitTextArea();
+  }
+
+  // handlers
   const textareaChangeHandler: ChangeEventHandler<HTMLTextAreaElement> = (
     event
   ) => {
     setTextareaValue(event.target.value);
-  };
-  const index = sessions.length - 1;
-
-  const resetTextArea = () => {
-    if (textareaValue.length && textareaRef?.current) {
-      prevCountRef.current.push([
-        Date.now(),
-        textareaValue,
-        parseInt(textareaRef.current.style.fontSize),
-      ]);
-      setSessions([
-        ...sessions.slice(0, index),
-        {
-          id: sessions[index].id,
-          data: [...sessions[index].data, textareaValue.trim()],
-        },
-        ...sessions.slice(index + 1),
-      ]);
-      setTextareaValue("");
-    }
   };
 
   const keypressHandler: KeyboardEventHandler<HTMLTextAreaElement> = (
@@ -75,29 +103,14 @@ export default function TextArea({ textareaActiveState, sessionId }: Props) {
   ) => {
     if (event.code === "Enter") {
       event.preventDefault();
-      resetTextArea();
+      submitTextArea();
       return;
     }
   };
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      resetTextArea();
-    }, DELAY);
-    return () => {
-      clearTimeout(timer);
-    };
-  }, [textareaValue]);
-
-  //for autoFocus
-
-  if (textareaValue.length >= MAXCH) {
-    resetTextArea();
-  }
-
   return (
     <>
-      <div className="flex w-full p-4 gap-2 items-center">
+      <div className="animate-fade-in-down flex w-full p-4 gap-2 items-center">
         <XMarkIcon
           className="icon z-40"
           onClick={() => {
@@ -106,14 +119,17 @@ export default function TextArea({ textareaActiveState, sessionId }: Props) {
               setSessions(sessions.slice(0, -1));
           }}
         />
-        <p className="z-40 text-gray-500 break-words text-sm">(CTRL + Q)</p>
+        <p className="z-40 text-gray-500 font-italic">(CTRL+Q)</p>
 
-        <p className="ml-auto z-40 text-gray-500 break-words">
-          {textareaValue.length}/{MAXCH}
+        <p className="z-40  text-gray-500 ml-auto">
+          {textareaValue.length}/{MAXCH} fontSize: {fontSize}
         </p>
       </div>
 
-      <div className="relative h-full w-full border border-red-500">
+      <div
+        ref={fitTextRef}
+        className="animate-fade-in-down relative h-full w-full"
+      >
         <textarea
           name="textarea"
           id="textarea"
@@ -122,17 +138,19 @@ export default function TextArea({ textareaActiveState, sessionId }: Props) {
           onChange={textareaChangeHandler}
           value={textareaValue}
           className={`
-            textarea transition-all ease-in-out border
+            textarea
           `}
+          style={{ fontSize }}
           ref={textareaRef}
+          spellCheck
         />
 
-        {prevCountRef.current.map(([key, previousValue, originalFontSize]) => {
+        {prevCountRef.current.map(([key, previousValue]) => {
           return (
             <FadeOutText
               previousValue={previousValue}
               onAnimationEnd={() => {
-                prevCountRef.current && prevCountRef.current.shift();
+                prevCountRef.current.shift();
               }}
               key={key}
             />
