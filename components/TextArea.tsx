@@ -91,8 +91,7 @@ export default function TextArea({ sessionState, endSession }: Props) {
   const keypressHandler: KeyboardEventHandler<HTMLTextAreaElement> = (
     event
   ) => {
-    console.log(event.code);
-    if (event.code === "Enter") {
+    if (event.key === "Enter") {
       event.preventDefault();
       submitTextArea();
       return;
