@@ -11,11 +11,13 @@ export default function Home() {
   const buttonClickHandler: MouseEventHandler<HTMLButtonElement> = (e) => {
     if (!textareaActive) {
       const now = Date.now();
+      setSessionId(now);
       setSessions([...sessions, { id: now, data: [] }]);
       setTextareaActive(true);
     }
   };
 
+  const [sessionId, setSessionId] = useState(0);
   const [sessions, setSessions] = useLocalStorage<Session[]>("sessions", []);
   const [keypress, setKeypress] = useState("");
   useEffect(() => {
@@ -35,6 +37,7 @@ export default function Home() {
       if (!textareaActive && e.key === "Enter") {
         e.preventDefault();
         const now = Date.now();
+        setSessionId(now);
         setSessions([...sessions, { id: now, data: [] }]);
         setTextareaActive(true);
       }
@@ -61,8 +64,9 @@ export default function Home() {
         </button>
       )}
 
-      {textareaActive && (
+      {textareaActive && sessionId > 0 && (
         <TextAreaComponent
+          sessionId={sessionId}
           textareaActiveState={[textareaActive, setTextareaActive]}
         />
       )}

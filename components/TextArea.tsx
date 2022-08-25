@@ -23,7 +23,7 @@ export type Session = {
 
 type PrevCount = [number, string];
 
-export default function TextArea({ textareaActiveState }: Props) {
+export default function TextArea({ textareaActiveState, sessionId }: Props) {
   //ref
 
   //for storing previousValue
@@ -142,6 +142,7 @@ export default function TextArea({ textareaActiveState }: Props) {
                 prevCountRef.current.shift();
               }}
               key={key}
+              originalFontSize={originalFontSize}
             />
           );
         })}
