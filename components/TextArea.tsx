@@ -9,7 +9,6 @@ import React, {
   useRef,
   useState,
 } from "react";
-import useFitText from "use-fit-text";
 import { useLocalStorage } from "../utils/Storage";
 import FadeOutText from "./FadeOut";
 
@@ -26,7 +25,6 @@ type PrevCount = [number, string];
 
 export default function TextArea({ textareaActiveState }: Props) {
   //ref
-  const { fontSize, ref: fitTextRef } = useFitText();
 
   //for storing previousValue
   const prevCountRef = useRef<PrevCount[]>([]);
@@ -119,14 +117,12 @@ export default function TextArea({ textareaActiveState }: Props) {
         <p className="z-40 text-gray-500 font-italic">(CTRL+Q)</p>
 
         <p className="z-40  text-gray-500 ml-auto">
-          {textareaValue.length}/{MAXCH} fontSize: {fontSize}
+          {textareaValue.length}/{MAXCH}
         </p>
       </div>
 
-      <div className="relative h-full w-full">
+      <div className="animate-fade-in-down relative h-full w-full">
         <textarea
-          name="textarea"
-          id="textarea"
           placeholder={sessions[index]?.data?.length === 0 ? "Enter Title" : ""}
           onKeyDown={keypressHandler}
           onChange={textareaChangeHandler}
@@ -134,7 +130,6 @@ export default function TextArea({ textareaActiveState }: Props) {
           className={`
             textarea
           `}
-          style={{ fontSize }}
           ref={textareaRef}
           spellCheck
         />
