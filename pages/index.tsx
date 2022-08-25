@@ -81,6 +81,8 @@ export default function Home() {
         pauseOnHover={false}
       />
 
+      {keypress}
+
       {buttonActive && (
         <button
           onClick={buttonClickHandler}
