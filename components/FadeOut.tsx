@@ -14,8 +14,12 @@ function FadeOutText({ previousValue, onAnimationEnd }: Props) {
           absolute
           animate-fade-out-up
           select-none
-          -z-40`}
-      contentEditable
+          -z-40 
+          ${
+            previousValue.length > 18
+              ? "text-xl sm:text-7xl"
+              : "text-6xl sm:text-9xl"
+          }`}
       spellCheck
       onAnimationEnd={onAnimationEnd}
     />

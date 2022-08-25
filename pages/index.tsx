@@ -1,23 +1,46 @@
 import _ from "lodash";
 import { MouseEventHandler, useEffect, useState } from "react";
+import { toast, ToastContainer } from "react-toastify";
 import Layout from "../components/Layout";
 import TextAreaComponent, { Session } from "../components/TextArea";
 import { useLocalStorage } from "../utils/Storage";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function Home() {
   const [textareaActive, setTextareaActive] = useState(false);
   const [buttonActive, setButtonActive] = useState(true);
 
+  const savedToast = () =>
+    toast.success("🦄 Wow so easy!", {
+      position: "top-center",
+      autoClose: 750,
+      hideProgressBar: true,
+      closeOnClick: false,
+      pauseOnHover: false,
+      draggable: false,
+      progress: undefined,
+    });
+
+  const startSession = () => {
+    const now = Date.now();
+    setSessions([...sessions, { id: now, data: [] }]);
+    setTextareaActive(true);
+    setButtonActive(false);
+  };
+
+  const endSession = () => {
+    setTextareaActive(false);
+    setButtonActive(false);
+    if (sessions.at(-1)?.data.length === 0) setSessions(sessions.slice(0, -1));
+    else savedToast();
+  };
+
   const buttonClickHandler: MouseEventHandler<HTMLButtonElement> = (e) => {
     if (!textareaActive) {
-      const now = Date.now();
-      setSessionId(now);
-      setSessions([...sessions, { id: now, data: [] }]);
-      setTextareaActive(true);
+      startSession();
     }
   };
 
-  const [sessionId, setSessionId] = useState(0);
   const [sessions, setSessions] = useLocalStorage<Session[]>("sessions", []);
   const [keypress, setKeypress] = useState("");
   useEffect(() => {
@@ -28,18 +51,13 @@ export default function Home() {
 
       if (textareaActive && e.key === "") {
         e.preventDefault();
-        setTextareaActive(false);
-        if (sessions.at(-1)?.data.length === 0)
-          setSessions(sessions.slice(0, -1));
+        endSession();
       }
 
       // return key doesn't actually work
       if (!textareaActive && e.key === "Enter") {
         e.preventDefault();
-        const now = Date.now();
-        setSessionId(now);
-        setSessions([...sessions, { id: now, data: [] }]);
-        setTextareaActive(true);
+        startSession();
       }
 
       return () => {
@@ -50,6 +68,18 @@ export default function Home() {
 
   return (
     <Layout>
+      <ToastContainer
+        position="top-center"
+        autoClose={750}
+        hideProgressBar
+        newestOnTop={false}
+        closeOnClick={false}
+        rtl={false}
+        pauseOnFocusLoss={false}
+        draggable={false}
+        pauseOnHover={false}
+      />
+
       {buttonActive && (
         <button
           onClick={buttonClickHandler}
@@ -64,10 +94,10 @@ export default function Home() {
         </button>
       )}
 
-      {textareaActive && sessionId > 0 && (
+      {textareaActive && (
         <TextAreaComponent
-          sessionId={sessionId}
-          textareaActiveState={[textareaActive, setTextareaActive]}
+          sessionState={[sessions, setSessions]}
+          endSession={endSession}
         />
       )}
     </Layout>
