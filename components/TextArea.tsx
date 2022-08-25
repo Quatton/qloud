@@ -10,7 +10,6 @@ import React, {
   useRef,
   useState,
 } from "react";
-import useFitText from "use-fit-text";
 import { useLocalStorage } from "../utils/Storage";
 import FadeOutText from "./FadeOut";
 
@@ -24,11 +23,10 @@ export type Session = {
   data: string[];
 };
 
-type PrevCount = [number, string];
+type PrevCount = [number, string, number];
 
 export default function TextArea({ textareaActiveState, sessionId }: Props) {
   //ref
-  const { fontSize, ref: fitTextRef } = useFitText();
 
   //for storing previousValue
   const prevCountRef = useRef<PrevCount[]>([]);
@@ -53,7 +51,11 @@ export default function TextArea({ textareaActiveState, sessionId }: Props) {
     const saveText = textareaValue.trim();
     if (textareaValue.length && textareaRef?.current) {
       // previous value animation
-      prevCountRef.current.push([Date.now(), saveText]);
+      prevCountRef.current.push([
+        Date.now(),
+        saveText,
+        parseInt(textareaRef.current.style.fontSize),
+      ]);
 
       // save in session
       setSessions([
@@ -122,17 +124,12 @@ export default function TextArea({ textareaActiveState, sessionId }: Props) {
         <p className="z-40 text-gray-500 font-italic">(CTRL+Q)</p>
 
         <p className="z-40  text-gray-500 ml-auto">
-          {textareaValue.length}/{MAXCH} fontSize: {fontSize}
+          {textareaValue.length}/{MAXCH}
         </p>
       </div>
 
-      <div
-        ref={fitTextRef}
-        className="animate-fade-in-down relative h-full w-full"
-      >
+      <div className="animate-fade-in-down relative h-full w-full">
         <textarea
-          name="textarea"
-          id="textarea"
           placeholder={sessions[index]?.data?.length === 0 ? "Enter Title" : ""}
           onKeyDown={keypressHandler}
           onChange={textareaChangeHandler}
@@ -140,12 +137,11 @@ export default function TextArea({ textareaActiveState, sessionId }: Props) {
           className={`
             textarea
           `}
-          style={{ fontSize }}
           ref={textareaRef}
           spellCheck
         />
 
-        {prevCountRef.current.map(([key, previousValue]) => {
+        {prevCountRef.current.map(([key, previousValue, originalFontSize]) => {
           return (
             <FadeOutText
               previousValue={previousValue}
@@ -153,6 +149,7 @@ export default function TextArea({ textareaActiveState, sessionId }: Props) {
                 prevCountRef.current.shift();
               }}
               key={key}
+              originalFontSize={originalFontSize}
             />
           );
         })}
