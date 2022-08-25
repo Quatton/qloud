@@ -4,18 +4,17 @@ import React, {
   ChangeEventHandler,
   Dispatch,
   KeyboardEventHandler,
-  MutableRefObject,
   SetStateAction,
   useEffect,
   useRef,
   useState,
 } from "react";
+import useFitText from "use-fit-text";
 import { useLocalStorage } from "../utils/Storage";
 import FadeOutText from "./FadeOut";
 
 type Props = {
   textareaActiveState: [boolean, Dispatch<SetStateAction<boolean>>];
-  sessionId: number;
 };
 
 export type Session = {
@@ -25,14 +24,11 @@ export type Session = {
 
 type PrevCount = [number, string, number];
 
-export default function TextArea({ textareaActiveState, sessionId }: Props) {
+export default function TextArea({ textareaActiveState }: Props) {
   //ref
 
   //for storing previousValue
   const prevCountRef = useRef<PrevCount[]>([]);
-  const textareaRef: MutableRefObject<HTMLTextAreaElement | null> =
-    useRef(null);
-
   //state
   const [textareaValue, setTextareaValue] = useState("");
   const [textareaActive, setTextareaActive] = textareaActiveState;
@@ -94,15 +90,11 @@ export default function TextArea({ textareaActiveState, sessionId }: Props) {
   }
 
   // handlers
-  const textareaChangeHandler: ChangeEventHandler<HTMLTextAreaElement> = (
-    event
-  ) => {
-    setTextareaValue(event.target.value);
+  const textareaChangeHandler: ChangeEventHandler<HTMLDivElement> = (event) => {
+    setTextareaValue(event.target.innerText);
   };
 
-  const keypressHandler: KeyboardEventHandler<HTMLTextAreaElement> = (
-    event
-  ) => {
+  const keypressHandler: KeyboardEventHandler<HTMLDivElement> = (event) => {
     if (event.code === "Enter") {
       event.preventDefault();
       submitTextArea();
@@ -124,22 +116,29 @@ export default function TextArea({ textareaActiveState, sessionId }: Props) {
         <p className="z-40 text-gray-500 font-italic">(CTRL+Q)</p>
 
         <p className="z-40  text-gray-500 ml-auto">
-          {textareaValue.length}/{MAXCH}
+          {textareaValue.length}/{MAXCH} {fontSize}
         </p>
       </div>
 
       <div className="animate-fade-in-down relative h-full w-full">
-        <textarea
-          placeholder={sessions[index]?.data?.length === 0 ? "Enter Title" : ""}
+        <div
+          data-placeholder={
+            sessions[index]?.data?.length === 0 && !textareaValue
+              ? "Enter Title"
+              : ""
+          }
           onKeyDown={keypressHandler}
-          onChange={textareaChangeHandler}
-          value={textareaValue}
+          onInput={textareaChangeHandler}
           className={`
-            textarea
+            textarea before:content-[attr(data-placeholder)] before:text-gray-400 before:absolute
           `}
           ref={textareaRef}
+          contentEditable
           spellCheck
-        />
+          style={{ fontSize }}
+        >
+          {textareaValue}
+        </div>
 
         {prevCountRef.current.map(([key, previousValue, originalFontSize]) => {
           return (
@@ -149,7 +148,6 @@ export default function TextArea({ textareaActiveState, sessionId }: Props) {
                 prevCountRef.current.shift();
               }}
               key={key}
-              originalFontSize={originalFontSize}
             />
           );
         })}

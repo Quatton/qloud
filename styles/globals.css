@@ -22,7 +22,7 @@ a {
 .textarea {
   @apply p-8 font-mono absolute top-0 bottom-0 left-0 right-0
   bg-transparent focus:outline-none outline-none
-  resize-none overflow-clip break-words align-middle text-9xl;
+  resize-none overflow-clip break-words text-9xl;
 }
 
 .button {

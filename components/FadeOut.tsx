@@ -1,32 +1,30 @@
 import React, { AnimationEventHandler, memo, useState } from "react";
+import useFitText from "use-fit-text";
 
 type Props = {
   previousValue: string;
-  onAnimationEnd: AnimationEventHandler<HTMLTextAreaElement>;
-  originalFontSize: number;
+  onAnimationEnd: AnimationEventHandler<HTMLDivElement>;
 };
 
-function FadeOutText({
-  previousValue,
-  onAnimationEnd,
-  originalFontSize,
-}: Props) {
+function FadeOutText({ previousValue, onAnimationEnd }: Props) {
+  const { fontSize, ref: textareaRef } = useFitText({});
+
   return (
-    <textarea
-      name="textarea"
-      id="textarea"
-      value={previousValue}
-      className={`
-        textarea
-        absolute
-        animate-fade-out-up
-        select-none
-        -z-40
-        `}
-      style={{ fontSize: originalFontSize }}
-      readOnly
+    <div
       onAnimationEnd={onAnimationEnd}
-    />
+      className={`
+          textarea
+          absolute
+          animate-fade-out-up
+          select-none
+          -z-40`}
+      ref={textareaRef}
+      contentEditable
+      spellCheck
+      style={{ fontSize }}
+    >
+      {previousValue}
+    </div>
   );
 }
 
