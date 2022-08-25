@@ -63,10 +63,12 @@ export default function Home() {
       >
         Begin Session
       </button>
-      <TextAreaComponent
-        sessionId={sessionId}
-        textareaActiveState={[textareaActive, setTextareaActive]}
-      />
+      {textareaActive && sessionId > 0 && (
+        <TextAreaComponent
+          sessionId={sessionId}
+          textareaActiveState={[textareaActive, setTextareaActive]}
+        />
+      )}
     </Layout>
   );
 }

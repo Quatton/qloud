@@ -7,7 +7,6 @@ import React, {
   MutableRefObject,
   SetStateAction,
   useEffect,
-  useMemo,
   useRef,
   useState,
 } from "react";
@@ -28,7 +27,6 @@ type PrevCount = [number, string, number];
 
 export default function TextArea({ textareaActiveState, sessionId }: Props) {
   const [textareaActive, setTextareaActive] = textareaActiveState;
-  if (!textareaActive || sessionId < 0) return null;
 
   const [sessions, setSessions] = useLocalStorage<Session[]>("sessions", []);
 
