@@ -1,12 +1,30 @@
 import React from "react";
 import Layout from "../../components/Layout";
+import { Session } from "../../components/TextArea";
 import { useLocalStorage } from "../../utils/Storage";
+import _ from "lodash";
+import { useRouter } from "next/router";
 
 type Props = {};
 
 export default function Pages({}: Props) {
-  const [getItem, setItem] = useLocalStorage(localStorage, "data");
-  const sessions = getItem("sessions") ? getItem("sessions") : [];
+  const { query } = useRouter();
 
-  return <Layout></Layout>;
+  const [sessions, setSessions] = useLocalStorage<Session[]>("sessions", []);
+  const session = _.find(
+    sessions,
+    ({ id, data }) => id.toString() === query.id
+  ) || { id: -1, data: [] };
+
+  const { id, data } = session;
+  return (
+    <Layout>
+      <div className="p-4 w-full h-full flex flex-col items-start font-mono overflow-y-auto">
+        <h1 className="text-4xl mb-4">{data[0]}</h1>
+        {data.slice(1).map((text, i) => (
+          <li className={`break-words text-2xl list-disc`}>{text}</li>
+        ))}
+      </div>
+    </Layout>
+  );
 }

@@ -1,3 +1,4 @@
+import _ from "lodash";
 import { MouseEventHandler, useEffect, useState } from "react";
 import Layout from "../components/Layout";
 import TextAreaComponent, { Session } from "../components/TextArea";
@@ -8,29 +9,35 @@ export default function Home() {
 
   const buttonClickHandler: MouseEventHandler<HTMLButtonElement> = (e) => {
     if (!textareaActive) {
-      e.preventDefault();
-      setSessions([...sessions, { id: sessionId, data: [] }]);
+      const now = Date.now();
+      setSessionId(now);
+      setSessions([...sessions, { id: now, data: [] }]);
       setTextareaActive(true);
     }
   };
 
+  const [sessionId, setSessionId] = useState(0);
   const [sessions, setSessions] = useLocalStorage<Session[]>("sessions", []);
-  const sessionId = Date.now();
+  const [keypress, setKeypress] = useState("");
   useEffect(() => {
     // for saving after session ends
 
     addEventListener("keypress", (e) => {
+      setKeypress(e.key);
+
       if (textareaActive && e.key === "") {
         e.preventDefault();
         setTextareaActive(false);
-        if (!sessions[sessions.length - 1].data.length)
-          setSessions(sessions.slice(0, sessions.length - 1));
+        if (sessions.at(-1)?.data.length === 0)
+          setSessions(sessions.slice(0, -1));
       }
 
       // return key doesn't actually work
       if (!textareaActive && e.key === "Enter") {
         e.preventDefault();
-        setSessions([...sessions, { id: sessionId, data: [] }]);
+        const now = Date.now();
+        setSessionId(now);
+        setSessions([...sessions, { id: now, data: [] }]);
         setTextareaActive(true);
       }
 
@@ -42,6 +49,10 @@ export default function Home() {
 
   return (
     <Layout>
+      <p className="absolute z-40 top-24 invisible">
+        {keypress || 0} {sessionId || 0}{" "}
+        {sessions[sessions.length - 1]?.id || 0}
+      </p>
       <button
         onClick={buttonClickHandler}
         className={`absolute button primary-button select-none ${
@@ -53,8 +64,8 @@ export default function Home() {
         Begin Session
       </button>
       <TextAreaComponent
-        saveState={[sessions, setSessions]}
-        active={textareaActive}
+        sessionId={sessionId}
+        textareaActiveState={[textareaActive, setTextareaActive]}
       />
     </Layout>
   );

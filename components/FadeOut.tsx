@@ -10,8 +10,6 @@ function FadeOutText({ previousValue, onAnimationEnd }: Props) {
     <textarea
       name="textarea"
       id="textarea"
-      cols={30}
-      rows={10}
       value={previousValue}
       className={`
         textarea

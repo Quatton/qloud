@@ -1,3 +1,5 @@
+import { XMarkIcon } from "@heroicons/react/24/outline";
+import _ from "lodash";
 import React, {
   ChangeEventHandler,
   Dispatch,
@@ -5,6 +7,7 @@ import React, {
   MutableRefObject,
   SetStateAction,
   useEffect,
+  useMemo,
   useRef,
   useState,
 } from "react";
@@ -12,8 +15,8 @@ import { useLocalStorage } from "../utils/Storage";
 import FadeOutText from "./FadeOut";
 
 type Props = {
-  active: boolean;
-  saveState: [Session[], (value: Session[]) => void];
+  textareaActiveState: [boolean, Dispatch<SetStateAction<boolean>>];
+  sessionId: number;
 };
 
 export type Session = {
@@ -23,8 +26,11 @@ export type Session = {
 
 type PrevCount = [number, string, number];
 
-export default function TextArea({ active, saveState }: Props) {
-  if (!active) return null;
+export default function TextArea({ textareaActiveState, sessionId }: Props) {
+  const [textareaActive, setTextareaActive] = textareaActiveState;
+  if (!textareaActive || sessionId < 0) return null;
+
+  const [sessions, setSessions] = useLocalStorage<Session[]>("sessions", []);
 
   const DELAY = 3000;
   const MAXCH = 300;
@@ -45,8 +51,7 @@ export default function TextArea({ active, saveState }: Props) {
   ) => {
     setTextareaValue(event.target.value);
   };
-
-  const [sessions, setSessions] = saveState;
+  const index = sessions.length - 1;
 
   const resetTextArea = () => {
     if (textareaValue.length && textareaRef?.current) {
@@ -56,11 +61,12 @@ export default function TextArea({ active, saveState }: Props) {
         parseInt(textareaRef.current.style.fontSize),
       ]);
       setSessions([
-        ...sessions.slice(0, sessions.length - 1),
+        ...sessions.slice(0, index),
         {
-          id: sessions[sessions.length - 1].id,
-          data: [...sessions[sessions.length - 1].data, textareaValue],
+          id: sessions[index].id,
+          data: [...sessions[index].data, textareaValue.trim()],
         },
+        ...sessions.slice(index + 1),
       ]);
       setTextareaValue("");
     }
@@ -92,36 +98,49 @@ export default function TextArea({ active, saveState }: Props) {
   }
 
   return (
-    <div className="w-full h-full flex flex-col justify-center items-center">
-      <p className="self-end mr-16 text-gray-500">
-        {textareaValue.length}/{MAXCH}
-      </p>
+    <>
+      <div className="flex w-full p-4 gap-2 items-center">
+        <XMarkIcon
+          className="icon z-40"
+          onClick={() => {
+            setTextareaActive(false);
+            if (sessions.at(-1)?.data.length === 0)
+              setSessions(sessions.slice(0, -1));
+          }}
+        />
+        <p className="z-40 text-gray-500 break-words text-sm">(CTRL + Q)</p>
 
-      <textarea
-        name="textarea"
-        id="textarea"
-        cols={30}
-        rows={10}
-        onKeyDown={keypressHandler}
-        onChange={textareaChangeHandler}
-        value={textareaValue}
-        className={`
-        textarea transition-all ease-in-out
-        `}
-        ref={textareaRef}
-      />
+        <p className="ml-auto z-40 text-gray-500 break-words">
+          {textareaValue.length}/{MAXCH}
+        </p>
+      </div>
 
-      {prevCountRef.current.map(([key, previousValue, originalFontSize]) => {
-        return (
-          <FadeOutText
-            previousValue={previousValue}
-            onAnimationEnd={() => {
-              prevCountRef.current && prevCountRef.current.shift();
-            }}
-            key={key}
-          />
-        );
-      })}
-    </div>
+      <div className="relative h-full w-full border border-red-500">
+        <textarea
+          name="textarea"
+          id="textarea"
+          placeholder={sessions[index]?.data?.length === 0 ? "Enter Title" : ""}
+          onKeyDown={keypressHandler}
+          onChange={textareaChangeHandler}
+          value={textareaValue}
+          className={`
+            textarea transition-all ease-in-out border
+          `}
+          ref={textareaRef}
+        />
+
+        {prevCountRef.current.map(([key, previousValue, originalFontSize]) => {
+          return (
+            <FadeOutText
+              previousValue={previousValue}
+              onAnimationEnd={() => {
+                prevCountRef.current && prevCountRef.current.shift();
+              }}
+              key={key}
+            />
+          );
+        })}
+      </div>
+    </>
   );
 }

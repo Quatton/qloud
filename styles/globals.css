@@ -20,7 +20,9 @@ a {
 }
 
 .textarea {
-  @apply w-full max-w-3xl h-3/5 p-8 font-mono bg-transparent focus:outline-none resize-none overflow-clip text-3xl outline-none;
+  @apply p-8 font-mono absolute top-0 bottom-0 left-0 right-0
+  bg-transparent focus:outline-none outline-none
+  resize-none overflow-clip text-3xl break-words;
 }
 
 .button {
@@ -29,4 +31,8 @@ a {
 
 .primary-button {
   @apply bg-sky-200 text-gray-700;
+}
+
+.icon {
+  @apply w-8 h-8 sm:w-6 sm:h-6 text-sky-500 hover:text-sky-300 transition-colors cursor-pointer animate-fade-in;
 }

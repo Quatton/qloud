@@ -7,20 +7,51 @@ module.exports = {
   theme: {
     extend: {
       animation: {
+        "fade-out": "fade-out 0.2s ease-out forwards",
+        "fade-in": "fade-in 0.2s ease-out forwards",
         "fade-out-up": "fade-out-up 2s ease-out forwards",
-        "fade-in-down": "fade-in-down 2s ease-out forwards",
+        "fade-in-down": "fade-in-down 0.5s ease-out forwards",
       },
       keyframes: {
-        "fade-out-up": {
-          from: { opacity: 100 },
+        "fade-out": {
+          from: { opacity: 100, display: "block" },
           to: {
-            transform: "translateY(-5rem)",
             opacity: 0,
             display: "none",
           },
         },
+        "fade-in": {
+          from: {
+            opacity: 0,
+            display: "none",
+          },
+          to: {
+            opacity: 100,
+            display: "block",
+          },
+        },
+        up: {
+          from: { transform: "translateY(0)" },
+          to: { transform: "translateY(-5rem)" },
+        },
+        down: {
+          from: {
+            transform: "translateY(-2rem)",
+          },
+          to: {
+            transform: "translateY(0)",
+          },
+        },
+        "fade-out-up": {
+          from: { transform: "translateY(0)", opacity: 100, display: "block" },
+          to: { transform: "translateY(-5rem)", opacity: 0, display: "none" },
+        },
         "fade-in-down": {
-          from: { opacity: 0, transform: "translateY(-5rem)" },
+          from: {
+            transform: "translateY(-5rem)",
+            opacity: 0,
+            display: "none",
+          },
           to: {
             transform: "translateY(0)",
             opacity: 100,
