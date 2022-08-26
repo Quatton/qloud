@@ -23,11 +23,10 @@ export default function PageCard({ id, data }: Props) {
       <div
         className="
         w-full flex flex-row justify-between 
-        border-b border-b-sky-200 cursor-pointer
-        transition-all hover:scale-x-[1.005] hover:bg-sky-50
-        active:scale-x-[1.005] active:bg-sky-50
-        px-2 py-4 sm:px-8
-        text-base sm:text-xl 
+        cursor-pointer bg-sky-800/60
+        transition-all hover:bg-sky-600/30
+        p-3 rounded
+        text-base sm:text-lg
         "
       >
         <h1 className="">

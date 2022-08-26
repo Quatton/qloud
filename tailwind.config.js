@@ -9,6 +9,7 @@ module.exports = {
         "fade-in": "fade-in 0.2s ease-out forwards",
         "fade-out-up": "fade-out-up 2s ease-out forwards",
         "fade-in-down": "fade-in-down 0.5s ease-out forwards",
+        "spinning-sky": "spinning-sky 30s infinite",
       },
       keyframes: {
         "fade-out": {
@@ -56,8 +57,16 @@ module.exports = {
             display: "block",
           },
         },
+        "spinning-sky": {
+          from: {
+            "background-position": "0% 100%",
+          },
+          to: {
+            "background-position": "100% 0%",
+          },
+        },
       },
     },
   },
-  plugins: [],
+  plugins: [require("tailwind-scrollbar")],
 };

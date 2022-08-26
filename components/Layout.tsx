@@ -20,7 +20,8 @@ export default function Layout({ children }: Props) {
   return (
     <div
       className="
-      h-screen overflow-y-auto flex flex-col justify-center items-center"
+      h-screen overflow-y-auto flex flex-col justify-center items-center
+      bg-gradient-to-tl from-sky-400 to-sky-200 animate-spinning-sky"
     >
       <div className="w-full p-4 flex gap-2">
         <ArrowLeftIcon
@@ -45,7 +46,7 @@ export default function Layout({ children }: Props) {
 
       <div
         className="w-full h-full flex flex-col justify-center p-4
-      items-center animate-fade-in overflow-y-auto font-mono"
+      items-center animate-fade-in overflow-y-auto"
       >
         <Suspense fallback={<Loading />}>{children}</Suspense>
       </div>

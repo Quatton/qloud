@@ -17,12 +17,17 @@ export default function Pages({}: Props) {
   return (
     <Layout>
       <Suspense fallback={<Loading />}>
-        <div className="w-full h-full flex flex-col p-2 sm:p-4 overflow-y-auto">
-          {sessions.length ? (
-            sessions.map((props) => <PageCard key={props.id} {...props} />)
-          ) : (
-            <div className="flex flex-row justify-around">No data</div>
-          )}
+        <div className="w-full max-w-4xl h-full flex flex-col justify-center items-center text-base text-sky-50">
+          <div className="w-full flex flex-row p-1 mb-1 rounded-lg bg-sky-800/40">
+            <button className="button hover:bg-sky-800/40">Edit</button>
+          </div>
+          <div className="w-full max-h-full flex flex-col p-1 gap-1 overflow-y-auto rounded-lg bg-sky-800/40">
+            {sessions.length ? (
+              sessions.map((props) => <PageCard key={props.id} {...props} />)
+            ) : (
+              <div className="flex flex-row justify-around">No data</div>
+            )}
+          </div>
         </div>
       </Suspense>
     </Layout>

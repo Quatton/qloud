@@ -30,7 +30,7 @@ export default function Home() {
 
   const endSession = () => {
     setTextareaActive(false);
-    setButtonActive(false);
+    setButtonActive(true);
     if (sessions.at(-1)?.data.length === 0) setSessions(sessions.slice(0, -1));
     else savedToast();
   };
@@ -82,7 +82,9 @@ export default function Home() {
       {buttonActive && (
         <button
           onClick={buttonClickHandler}
-          className={`absolute button primary-button select-none ${
+          className={`absolute button select-none bg-sky-800/50
+          hover:bg-sky-500/20 transition-all
+          ${
             textareaActive
               ? "animate-fade-out-up disabled"
               : "animate-fade-in-down"

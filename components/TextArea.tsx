@@ -104,11 +104,11 @@ export default function TextArea({ sessionState, endSession }: Props) {
     <>
       <div className="animate-fade-in-down flex w-full p-4 gap-2 items-center">
         <XMarkIcon className="icon z-40" onClick={endSession} />
-        <p className="z-40 text-transparent sm:text-gray-500 font-italic">
-          (CTRL+Q)
+        <p className="z-40 text-transparent sm:text-sky-200 font-italic rounded bg-sky-500/[0.4] px-2">
+          CTRL+Q
         </p>
 
-        <p className="z-40 text-gray-500 ml-auto">
+        <p className="z-40 text-sky-200 ml-auto">
           {textareaValue.length}/{MAXCH}
         </p>
       </div>
