@@ -83,7 +83,7 @@ export default function Home() {
         <button
           onClick={buttonClickHandler}
           className={`absolute button select-none bg-sky-800/50
-          hover:bg-sky-500/20 transition-all
+          hover:bg-sky-500/20 transition-all text-sky-50
           ${
             textareaActive
               ? "animate-fade-out-up disabled"

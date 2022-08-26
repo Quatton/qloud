@@ -124,10 +124,10 @@ export default function TextArea({ sessionState, endSession }: Props) {
           onChange={textareaChangeHandler}
           value={textareaValue}
           className={`
-            textarea ${
+            textarea placeholder-sky-400 ${
               textareaValue.length > 18
-                ? "text-xl sm:text-7xl"
-                : "text-4xl sm:text-9xl"
+                ? "text-xl sm:text-6xl"
+                : "text-4xl sm:text-8xl"
             }
           `}
           ref={textareaRef}

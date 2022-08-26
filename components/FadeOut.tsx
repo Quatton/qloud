@@ -17,8 +17,8 @@ function FadeOutText({ previousValue, onAnimationEnd }: Props) {
           -z-40 
           ${
             previousValue.length > 18
-              ? "text-xl sm:text-7xl"
-              : "text-4xl sm:text-9xl"
+              ? "text-xl sm:text-6xl"
+              : "text-4xl sm:text-8xl"
           }`}
       spellCheck
       onAnimationEnd={onAnimationEnd}
