@@ -20,9 +20,9 @@ a {
 }
 
 .textarea {
-  @apply p-8 pt-0 sm:pt-8 font-mono absolute top-0 bottom-0 left-0 right-0
+  @apply focus:ring-0 border-none p-8 pt-0 sm:pt-8 font-mono absolute top-0 bottom-0 left-0 right-0
   bg-transparent focus:outline-none outline-none text-sky-100 drop-shadow-xl
-  resize-none overflow-clip break-words align-middle;
+  resize-none break-words align-middle overflow-clip;
 }
 
 .button {

@@ -1,9 +1,7 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: [
-    "./pages/**/*.{js,ts,jsx,tsx}",
-    "./components/**/*.{js,ts,jsx,tsx}",
-  ],
+  mode: "jit",
+  purge: ["./pages/**/*.{js,ts,jsx,tsx}", "./components/**/*.{js,ts,jsx,tsx}"],
   theme: {
     extend: {
       animation: {
@@ -12,6 +10,7 @@ module.exports = {
         "fade-out-up": "fade-out-up 2s ease-out forwards",
         "fade-in-down": "fade-in-down 0.5s ease-out forwards",
         "spinning-sky": "spinning-sky 30s infinite",
+        fly: "fly 2s ease-out forwards",
       },
       keyframes: {
         "fade-out": {
@@ -67,8 +66,23 @@ module.exports = {
             "background-position": "100% 0%",
           },
         },
+        fly: {
+          "0%": {
+            transform: "translate(0, 0) rotate(0)",
+            filter: "blur(0)",
+            opacity: 1,
+          },
+          "80%": {
+            transform: "translate(4.5rem, -4.5rem) rotate(360deg)",
+          },
+          "100%": {
+            transform: "translate(1.5rem, -4.5rem) rotate(360deg)",
+            filter: "blur(1rem)",
+            opacity: 0,
+          },
+        },
       },
     },
   },
-  plugins: [require("tailwind-scrollbar")],
+  plugins: [require("tailwind-scrollbar"), require("@tailwindcss/forms")],
 };
