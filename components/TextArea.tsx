@@ -1,3 +1,4 @@
+import { Switch } from "@headlessui/react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import _ from "lodash";
 import React, {
@@ -7,7 +8,8 @@ import React, {
   useRef,
   useState,
 } from "react";
-import FadeOutText from "./FadeOut";
+import FadeOut from "./FadeOut";
+import FlyOut from "./FlyOut";
 
 type Props = {
   sessionState: [Session[], (value: Session[]) => void];
@@ -30,6 +32,7 @@ export default function TextArea({ sessionState, endSession }: Props) {
 
   //state
   const [textareaValue, setTextareaValue] = useState("");
+  const [advancedTextAnim, setAdvancedTextAnim] = useState(true);
   //localStorage
   const [sessions, setSessions] = sessionState;
 
@@ -88,11 +91,12 @@ export default function TextArea({ sessionState, endSession }: Props) {
     setTextareaValue(event.target.value);
   };
 
+  const [keypress, setKeypress] = useState("");
   const keypressHandler: KeyboardEventHandler<HTMLTextAreaElement> = (
     event
   ) => {
-    console.log(event.code);
-    if (event.code === "Enter") {
+    setKeypress(event.key);
+    if (event.key === "Enter") {
       event.preventDefault();
       submitTextArea();
       return;
@@ -101,49 +105,72 @@ export default function TextArea({ sessionState, endSession }: Props) {
 
   return (
     <>
-      <div className="animate-fade-in-down flex w-full p-4 gap-2 items-center">
+      <div className="animate-fade-in-down flex w-full p-4 gap-2 items-center z-40">
         <XMarkIcon className="icon z-40" onClick={endSession} />
-        <p className="z-40 text-transparent sm:text-gray-500 font-italic">
-          (CTRL+Q)
+        <p className="z-40 hidden sm:block text-sky-200 font-italic rounded bg-sky-500/[0.4] px-2">
+          CTRL+Q
         </p>
 
-        <p className="z-40 text-gray-500 ml-auto">
+        <Switch
+          checked={advancedTextAnim}
+          onChange={setAdvancedTextAnim}
+          className={`${
+            advancedTextAnim ? "bg-sky-500/[0.6]" : "bg-sky-300/[0.6]"
+          } relative inline-flex h-6 w-11 items-center rounded-full`}
+        >
+          <span
+            className={`${
+              advancedTextAnim ? "translate-x-6" : "translate-x-1"
+            } inline-block h-4 w-4 transform rounded-full bg-white`}
+          />
+        </Switch>
+
+        <p className="z-40 text-sky-200 ml-auto rounded bg-sky-500/[0.6] px-2">
           {textareaValue.length}/{MAXCH}
         </p>
       </div>
 
       <div className="animate-fade-in-down relative h-full w-full">
-        <textarea
-          placeholder={
-            sessions[sessions.length - 1].data?.length === 0
-              ? "Enter Title"
-              : ""
-          }
-          onKeyDown={keypressHandler}
-          onChange={textareaChangeHandler}
-          value={textareaValue}
-          className={`
-            textarea ${
-              textareaValue.length > 18
-                ? "text-xl sm:text-7xl"
-                : "text-6xl sm:text-9xl"
+        <>
+          <textarea
+            placeholder={
+              sessions[sessions.length - 1].data?.length === 0
+                ? "Enter Title"
+                : ""
             }
-          `}
-          ref={textareaRef}
-          spellCheck
-        />
-
-        {prevCountRef.current.map(([key, previousValue]) => {
-          return (
-            <FadeOutText
-              previousValue={previousValue}
-              onAnimationEnd={() => {
-                prevCountRef.current.shift();
-              }}
-              key={key}
-            />
-          );
-        })}
+            onKeyDown={keypressHandler}
+            onChange={textareaChangeHandler}
+            value={textareaValue}
+            className={`
+                textarea placeholder-sky-200 ${
+                  textareaValue.length > 18
+                    ? "text-xl sm:text-6xl"
+                    : "text-4xl sm:text-8xl"
+                }
+              `}
+            ref={textareaRef}
+            spellCheck
+          />
+          {prevCountRef.current.map(([key, previousValue]) =>
+            advancedTextAnim ? (
+              <FlyOut
+                previousValue={previousValue}
+                onAnimationEnd={() => {
+                  prevCountRef.current.shift();
+                }}
+                key={key}
+              />
+            ) : (
+              <FadeOut
+                previousValue={previousValue}
+                onAnimationEnd={() => {
+                  prevCountRef.current.shift();
+                }}
+                key={key}
+              />
+            )
+          )}
+        </>
       </div>
     </>
   );
