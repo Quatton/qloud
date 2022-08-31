@@ -91,21 +91,36 @@ export default function Layout({ children }: Props) {
 
                     <div className="mt-4">
                       <label
-                        htmlFor="price"
+                        htmlFor="token"
                         className="block text-sm font-medium text-gray-700"
                       >
-                        Sample Setting
+                        Notion Internal Integration Token
                       </label>
                       <div className="relative mt-1 rounded-md shadow-sm">
-                        <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                          <span className="text-gray-500 sm:text-sm">$</span>
-                        </div>
                         <input
                           type="text"
-                          name="price"
-                          id="price"
-                          className="block w-full rounded-md border-gray-300 pl-7 pr-12 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                          placeholder="0.00"
+                          name="notion-api-token"
+                          id="token"
+                          className="block w-full rounded-md border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                          placeholder="secret_"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="mt-4">
+                      <label
+                        htmlFor="token"
+                        className="block text-sm font-medium text-gray-700"
+                      >
+                        Notion Page ID
+                      </label>
+                      <div className="relative mt-1 rounded-md shadow-sm">
+                        <input
+                          type="text"
+                          name="notion-api-token"
+                          id="token"
+                          className="block w-full rounded-md border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                          placeholder="https://www.notion.so/page-name-[Page-ID]"
                         />
                       </div>
                     </div>
@@ -116,7 +131,7 @@ export default function Layout({ children }: Props) {
                         className="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
                         onClick={closeModal}
                       >
-                        Got it, thanks!
+                        Save
                       </button>
                     </div>
                   </Dialog.Panel>
