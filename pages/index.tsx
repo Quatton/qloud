@@ -1,14 +1,17 @@
 import _ from "lodash";
-import { MouseEventHandler, useEffect, useState } from "react";
+import { MouseEventHandler, useContext, useEffect, useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
 import Layout from "../components/Layout";
-import TextAreaComponent, { Session } from "../components/TextArea";
-import { useLocalStorage } from "../utils/Storage";
+import TextAreaComponent from "../components/TextArea";
 import "react-toastify/dist/ReactToastify.css";
+import { SettingContext } from "../utils/Settings";
+import { SessionContext } from "../utils/Sessions";
 
 export default function Home() {
   const [textareaActive, setTextareaActive] = useState(false);
   const [buttonActive, setButtonActive] = useState(true);
+  const { sessions, setSessions } = useContext(SessionContext);
+  const { settings, setSettings } = useContext(SettingContext);
 
   const savedToast = () =>
     toast.success("Saved!", {
@@ -40,8 +43,6 @@ export default function Home() {
       startSession();
     }
   };
-
-  const [sessions, setSessions] = useLocalStorage<Session[]>("sessions", []);
 
   useEffect(() => {
     // for saving after session ends
@@ -95,12 +96,7 @@ export default function Home() {
         </button>
       )}
 
-      {textareaActive && (
-        <TextAreaComponent
-          sessionState={[sessions, setSessions]}
-          endSession={endSession}
-        />
-      )}
+      {textareaActive && <TextAreaComponent endSession={endSession} />}
     </Layout>
   );
 }

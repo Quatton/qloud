@@ -1,6 +1,12 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
-import React, { Fragment, ReactNode, Suspense, useState } from "react";
+import React, {
+  Fragment,
+  ReactNode,
+  Suspense,
+  useContext,
+  useState,
+} from "react";
 import {
   ArrowLeftIcon,
   Cog6ToothIcon,
@@ -9,6 +15,8 @@ import {
 } from "@heroicons/react/24/outline";
 import Loading from "./Loading";
 import { Dialog, Transition } from "@headlessui/react";
+import { SettingContext } from "../utils/Settings";
+import axios from "axios";
 
 type Props = {
   children: ReactNode | ReactNode[];
@@ -19,6 +27,7 @@ export default function Layout({ children }: Props) {
   const { pathname } = router;
   const [loading, setLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const { settings, setSettings } = useContext(SettingContext);
 
   function closeModal() {
     setIsOpen(false);
@@ -26,6 +35,28 @@ export default function Layout({ children }: Props) {
 
   function openModal() {
     setIsOpen(true);
+  }
+
+  function sendTestRequest() {
+    axios
+      .get("/api/notion", {
+        params: {
+          token: settings.notionToken,
+          databaseId: settings.notionDatabaseId,
+        },
+      })
+      .then((res) => {
+        console.log("okay");
+        switch (res.status) {
+          case 200:
+            alert(res.data.message);
+            break;
+          case 404:
+            alert(res.data.message);
+            break;
+        }
+      })
+      .catch((err) => alert(err.message));
   }
 
   return (
@@ -99,39 +130,71 @@ export default function Layout({ children }: Props) {
                       <div className="relative mt-1 rounded-md shadow-sm">
                         <input
                           type="text"
-                          name="notion-api-token"
+                          name="notionToken"
                           id="token"
                           className="block w-full rounded-md border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                           placeholder="secret_"
+                          onChange={(e) =>
+                            setSettings({
+                              ...settings,
+                              notionToken: e.target.value,
+                            })
+                          }
+                          value={settings.notionToken}
                         />
                       </div>
                     </div>
 
                     <div className="mt-4">
                       <label
-                        htmlFor="token"
+                        htmlFor="dbId"
                         className="block text-sm font-medium text-gray-700"
                       >
-                        Notion Page ID
+                        Notion Database ID
                       </label>
                       <div className="relative mt-1 rounded-md shadow-sm">
                         <input
                           type="text"
-                          name="notion-api-token"
-                          id="token"
+                          name="notionDatabaseId"
+                          id="notionDatabaseId"
                           className="block w-full rounded-md border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                          placeholder="https://www.notion.so/page-name-[Page-ID]"
+                          placeholder="https://www.notion.so/myworkspace/[--- Database ID ---]?v="
+                          onChange={(e) =>
+                            setSettings({
+                              ...settings,
+                              notionDatabaseId: e.target.value,
+                            })
+                          }
+                          value={settings.notionDatabaseId}
                         />
                       </div>
                     </div>
 
-                    <div className="mt-4">
+                    <div className="relative mt-1 rounded-md shadow-sm">
+                      <a
+                        href="https://developers.notion.com/docs/getting-started"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="underline text-sm text-gray-700 hover:text-indigo-500"
+                      >
+                        Learn more
+                      </a>
+                    </div>
+
+                    <div className="mt-4 flex flex-row gap-2">
                       <button
                         type="button"
                         className="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
                         onClick={closeModal}
                       >
                         Save
+                      </button>
+                      <button
+                        type="button"
+                        className="inline-flex justify-center rounded-md border border-transparent bg-gray-100 px-4 py-2 text-sm font-medium text-gray-900 hover:bg-gray-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                        onClick={sendTestRequest}
+                      >
+                        Send Test Request
                       </button>
                     </div>
                   </Dialog.Panel>
