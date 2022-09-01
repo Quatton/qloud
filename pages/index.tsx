@@ -6,6 +6,7 @@ import TextAreaComponent from "../components/TextArea";
 import "react-toastify/dist/ReactToastify.css";
 import { SettingContext } from "../utils/Settings";
 import { SessionContext } from "../utils/Sessions";
+import { saveOnDatabase } from "../utils/notionUtil";
 
 export default function Home() {
   const [textareaActive, setTextareaActive] = useState(false);
@@ -34,8 +35,37 @@ export default function Home() {
   const endSession = () => {
     setTextareaActive(false);
     setButtonActive(true);
-    if (sessions.at(-1)?.data.length === 0) setSessions(sessions.slice(0, -1));
-    else savedToast();
+    if (sessions.at(-1)?.data.length === 0) {
+      setSessions(sessions.slice(0, -1));
+    } else {
+      if (settings.enableNotion) {
+        const res = saveOnDatabase(settings.notionToken, {
+          databaseId: settings.notionDatabaseId,
+          data: sessions.at(-1)?.data || [
+            "This is probably a bug. Go tell me.",
+          ],
+        });
+        toast.promise(
+          res,
+          {
+            pending: {
+              render: "Pending...",
+              delay: undefined,
+            },
+            success: "Successfully Saved!",
+            error: "Connection failed",
+          },
+          {
+            position: "top-center",
+            autoClose: 2000,
+            hideProgressBar: true,
+            closeOnClick: true,
+            pauseOnHover: false,
+            draggable: false,
+          }
+        );
+      }
+    }
   };
 
   const buttonClickHandler: MouseEventHandler<HTMLButtonElement> = (e) => {
@@ -45,41 +75,29 @@ export default function Home() {
   };
 
   useEffect(() => {
-    // for saving after session ends
-
-    addEventListener("keypress", (e) => {
-      if (textareaActive && e.key === "") {
+    console.log("reinit");
+    const keyPressHandler = (e: KeyboardEvent) => {
+      if (textareaActive && e.ctrlKey && e.code === "KeyQ") {
+        console.log(sessions);
         e.preventDefault();
         endSession();
       }
 
       // return key doesn't actually work
-      if (!textareaActive && e.key === "Enter") {
+      if (!textareaActive && e.code === "Enter") {
         e.preventDefault();
         startSession();
       }
-
-      return () => {
-        removeEventListener("keypress", () => {});
-      };
-    });
-  }, [textareaActive]);
+    };
+    // for saving after session ends
+    addEventListener("keypress", keyPressHandler);
+    return () => {
+      removeEventListener("keypress", keyPressHandler);
+    };
+  }, [textareaActive, sessions.at(-1)]);
 
   return (
     <Layout>
-      <ToastContainer
-        limit={1}
-        position="top-center"
-        autoClose={750}
-        hideProgressBar
-        newestOnTop={false}
-        closeOnClick={false}
-        rtl={false}
-        pauseOnFocusLoss={false}
-        draggable={false}
-        pauseOnHover={false}
-      />
-
       {buttonActive && (
         <button
           onClick={buttonClickHandler}

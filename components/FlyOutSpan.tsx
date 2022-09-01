@@ -6,7 +6,6 @@ type Props = {
 };
 
 function FlyOutSpan({ char, seconds }: Props) {
-  if (char === " ") console.log(char);
   return (
     <span
       className={`

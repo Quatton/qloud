@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
 import React, {
+  ChangeEvent,
   Fragment,
   ReactNode,
   Suspense,
@@ -14,9 +15,10 @@ import {
   HomeIcon,
 } from "@heroicons/react/24/outline";
 import Loading from "./Loading";
-import { Dialog, Transition } from "@headlessui/react";
+import { Dialog, Switch, Transition } from "@headlessui/react";
 import { SettingContext } from "../utils/Settings";
 import axios from "axios";
+import { toast, ToastContainer } from "react-toastify";
 
 type Props = {
   children: ReactNode | ReactNode[];
@@ -38,25 +40,31 @@ export default function Layout({ children }: Props) {
   }
 
   function sendTestRequest() {
-    axios
-      .get("/api/notion", {
-        params: {
-          token: settings.notionToken,
-          databaseId: settings.notionDatabaseId,
+    const res = axios.get("/api/notion", {
+      headers: { Authorization: settings.notionToken },
+      params: {
+        databaseId: settings.notionDatabaseId,
+      },
+    });
+    toast.promise(
+      res,
+      {
+        pending: {
+          render: "Pending...",
+          delay: undefined,
         },
-      })
-      .then((res) => {
-        console.log("okay");
-        switch (res.status) {
-          case 200:
-            alert(res.data.message);
-            break;
-          case 404:
-            alert(res.data.message);
-            break;
-        }
-      })
-      .catch((err) => alert(err.message));
+        success: "Successfully Connected!",
+        error: "Connection failed",
+      },
+      {
+        position: "top-center",
+        autoClose: 2000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: false,
+        draggable: false,
+      }
+    );
   }
 
   return (
@@ -119,6 +127,38 @@ export default function Layout({ children }: Props) {
                     >
                       Setting
                     </Dialog.Title>
+
+                    <div className="mt-4">
+                      <Switch.Group>
+                        <div className="flex items-center">
+                          <Switch.Label className="mr-4 text-sm font-medium text-gray-800">
+                            Enable Notion Integration
+                          </Switch.Label>
+                          <Switch
+                            checked={settings.enableNotion}
+                            onChange={(e: any) =>
+                              setSettings({
+                                ...settings,
+                                enableNotion: e.valueOf(),
+                              })
+                            }
+                            className={`${
+                              settings.enableNotion
+                                ? "bg-sky-500/[0.6]"
+                                : "bg-sky-300/[0.6]"
+                            } relative inline-flex h-6 w-11 items-center rounded-full`}
+                          >
+                            <span
+                              className={`${
+                                settings.enableNotion
+                                  ? "translate-x-6"
+                                  : "translate-x-1"
+                              } inline-block h-4 w-4 transform rounded-full bg-white`}
+                            />
+                          </Switch>
+                        </div>
+                      </Switch.Group>
+                    </div>
 
                     <div className="mt-4">
                       <label
@@ -204,6 +244,8 @@ export default function Layout({ children }: Props) {
           </Dialog>
         </Transition>
       </div>
+
+      <ToastContainer limit={1} />
 
       <div
         className="w-full h-full flex flex-col justify-center p-4
