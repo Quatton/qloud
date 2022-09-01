@@ -48,7 +48,7 @@ const notionAPI = async (req: NextApiRequest, res: NextApiResponse) => {
 
   if (req.method === "POST") {
     const { databaseId: database_id, data } = req.body;
-    if (typeof database_id !== "string" || !(data instanceof Array<string>))
+    if (typeof database_id !== "string" || typeof data !== "object")
       return res.status(400).json("Invalid requests");
     try {
       const pageCreate = await notion.pages.create({
@@ -65,7 +65,7 @@ const notionAPI = async (req: NextApiRequest, res: NextApiResponse) => {
             ],
           },
         },
-        children: data.slice(1).map((text) => {
+        children: data.slice(1).map((text: string) => {
           return {
             type: "bulleted_list_item",
             bulleted_list_item: {
