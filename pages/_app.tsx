@@ -31,6 +31,7 @@ export default function MyApp({ Component, pageProps }: AppProps) {
             type="image/png"
             sizes="32x32"
           />
+          <link href="/favicon.ico" rel="icon" type="image/ico" sizes="16x16" />
           <link rel="apple-touch-icon" href="/apple-icon.png"></link>
           <meta name="theme-color" content="#317EFB" />
         </Head>
