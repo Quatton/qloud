@@ -4,15 +4,16 @@ import _ from "lodash";
 import React, {
   ChangeEventHandler,
   KeyboardEventHandler,
+  useContext,
   useEffect,
   useRef,
   useState,
 } from "react";
+import { SessionContext } from "../utils/Sessions";
 import FadeOut from "./FadeOut";
 import FlyOut from "./FlyOut";
 
 type Props = {
-  sessionState: [Session[], (value: Session[]) => void];
   endSession: () => void;
 };
 
@@ -23,7 +24,7 @@ export type Session = {
 
 type PrevCount = [number, string];
 
-export default function TextArea({ sessionState, endSession }: Props) {
+export default function TextArea({ endSession }: Props) {
   //ref
 
   //for storing previousValue
@@ -33,8 +34,8 @@ export default function TextArea({ sessionState, endSession }: Props) {
   //state
   const [textareaValue, setTextareaValue] = useState("");
   const [advancedTextAnim, setAdvancedTextAnim] = useState(true);
-  //localStorage
-  const [sessions, setSessions] = sessionState;
+  //sessions
+  const { sessions, setSessions } = useContext(SessionContext);
 
   //constant
   const DELAY = 3000;

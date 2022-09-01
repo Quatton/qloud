@@ -1,19 +1,26 @@
 import _ from "lodash";
-import React, { MouseEventHandler, Suspense, useState } from "react";
+import React, {
+  MouseEventHandler,
+  Suspense,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import Layout from "../../components/Layout";
 import Loading from "../../components/Loading";
 import PageCard from "../../components/PageCard";
-import { Session } from "../../components/TextArea";
-import { useLocalStorage } from "../../utils/Storage";
+import { SessionContext } from "../../utils/Sessions";
 
 type Props = {};
 
 export default function Pages({}: Props) {
-  const [sessions, setSessions] = useLocalStorage<Session[]>("sessions", []);
+  const { sessions, setSessions } = useContext(SessionContext);
   const [editModeOn, setEditModeOn] = useState(false);
 
-  if (_.find(sessions, (session) => session.data.length === 0))
-    setSessions(_.filter(sessions, (session) => session.data.length > 0));
+  useEffect(() => {
+    if (_.find(sessions, (session) => session.data.length === 0))
+      setSessions(_.filter(sessions, (session) => session.data.length > 0));
+  }, [sessions]);
 
   const editButtonHandler: MouseEventHandler = (e) => {
     setEditModeOn(!editModeOn);
