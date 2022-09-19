@@ -9,15 +9,14 @@
     "@headlessui/react": "^1.6.6",
     "@heroicons/react": "^2.0.1",
     "@notionhq/client": "^2.1.1",
+    "axios": "^0.27.2",
     "date-fns": "^2.29.2",
-    "draft-js": "^0.11.7",
     "lodash": "^4.17.21",
     "next": "latest",
     "next-pwa": "5.5.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-toastify": "^9.0.8",
-    "use-fit-text": "^2.4.0"
+    "react-toastify": "^9.0.8"
   },
   "devDependencies": {
     "@babel/core": "^7.0.0",
