@@ -1,6 +1,13 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
-import React, { Fragment, ReactNode, Suspense, useState } from "react";
+import React, {
+  ChangeEvent,
+  Fragment,
+  ReactNode,
+  Suspense,
+  useContext,
+  useState,
+} from "react";
 import {
   ArrowLeftIcon,
   Cog6ToothIcon,
@@ -8,7 +15,10 @@ import {
   HomeIcon,
 } from "@heroicons/react/24/outline";
 import Loading from "./Loading";
-import { Dialog, Transition } from "@headlessui/react";
+import { Dialog, Switch, Transition } from "@headlessui/react";
+import { SettingContext } from "../utils/Settings";
+import axios from "axios";
+import { toast, ToastContainer } from "react-toastify";
 
 type Props = {
   children: ReactNode | ReactNode[];
@@ -19,6 +29,7 @@ export default function Layout({ children }: Props) {
   const { pathname } = router;
   const [loading, setLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const { settings, setSettings } = useContext(SettingContext);
 
   function closeModal() {
     setIsOpen(false);
@@ -26,6 +37,34 @@ export default function Layout({ children }: Props) {
 
   function openModal() {
     setIsOpen(true);
+  }
+
+  function sendTestRequest() {
+    const res = axios.get("/api/notion", {
+      headers: { Authorization: settings.notionToken },
+      params: {
+        databaseId: settings.notionDatabaseId,
+      },
+    });
+    toast.promise(
+      res,
+      {
+        pending: {
+          render: "Pending...",
+          delay: undefined,
+        },
+        success: "Successfully Connected!",
+        error: "Connection failed",
+      },
+      {
+        position: "top-center",
+        autoClose: 2000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: false,
+        draggable: false,
+      }
+    );
   }
 
   return (
@@ -90,33 +129,112 @@ export default function Layout({ children }: Props) {
                     </Dialog.Title>
 
                     <div className="mt-4">
+                      <Switch.Group>
+                        <div className="flex items-center">
+                          <Switch.Label className="mr-4 text-sm font-medium text-gray-800">
+                            Enable Notion Integration
+                          </Switch.Label>
+                          <Switch
+                            checked={settings.enableNotion}
+                            onChange={(e: any) =>
+                              setSettings({
+                                ...settings,
+                                enableNotion: e.valueOf(),
+                              })
+                            }
+                            className={`${
+                              settings.enableNotion
+                                ? "bg-sky-500/[0.6]"
+                                : "bg-sky-300/[0.6]"
+                            } relative inline-flex h-6 w-11 items-center rounded-full`}
+                          >
+                            <span
+                              className={`${
+                                settings.enableNotion
+                                  ? "translate-x-6"
+                                  : "translate-x-1"
+                              } inline-block h-4 w-4 transform rounded-full bg-white`}
+                            />
+                          </Switch>
+                        </div>
+                      </Switch.Group>
+                    </div>
+
+                    <div className="mt-4">
                       <label
-                        htmlFor="price"
+                        htmlFor="token"
                         className="block text-sm font-medium text-gray-700"
                       >
-                        Sample Setting
+                        Notion Internal Integration Token
                       </label>
                       <div className="relative mt-1 rounded-md shadow-sm">
-                        <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                          <span className="text-gray-500 sm:text-sm">$</span>
-                        </div>
                         <input
                           type="text"
-                          name="price"
-                          id="price"
-                          className="block w-full rounded-md border-gray-300 pl-7 pr-12 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                          placeholder="0.00"
+                          name="notionToken"
+                          id="token"
+                          className="block w-full rounded-md border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                          placeholder="secret_"
+                          onChange={(e) =>
+                            setSettings({
+                              ...settings,
+                              notionToken: e.target.value,
+                            })
+                          }
+                          value={settings.notionToken}
                         />
                       </div>
                     </div>
 
                     <div className="mt-4">
+                      <label
+                        htmlFor="dbId"
+                        className="block text-sm font-medium text-gray-700"
+                      >
+                        Notion Database ID
+                      </label>
+                      <div className="relative mt-1 rounded-md shadow-sm">
+                        <input
+                          type="text"
+                          name="notionDatabaseId"
+                          id="notionDatabaseId"
+                          className="block w-full rounded-md border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                          placeholder="https://www.notion.so/myworkspace/[--- Database ID ---]?v="
+                          onChange={(e) =>
+                            setSettings({
+                              ...settings,
+                              notionDatabaseId: e.target.value,
+                            })
+                          }
+                          value={settings.notionDatabaseId}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="relative mt-1 rounded-md shadow-sm">
+                      <a
+                        href="https://developers.notion.com/docs/getting-started"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="underline text-sm text-gray-700 hover:text-indigo-500"
+                      >
+                        Learn more
+                      </a>
+                    </div>
+
+                    <div className="mt-4 flex flex-row gap-2">
                       <button
                         type="button"
                         className="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
                         onClick={closeModal}
                       >
-                        Got it, thanks!
+                        Save
+                      </button>
+                      <button
+                        type="button"
+                        className="inline-flex justify-center rounded-md border border-transparent bg-gray-100 px-4 py-2 text-sm font-medium text-gray-900 hover:bg-gray-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                        onClick={sendTestRequest}
+                      >
+                        Send Test Request
                       </button>
                     </div>
                   </Dialog.Panel>
@@ -126,6 +244,8 @@ export default function Layout({ children }: Props) {
           </Dialog>
         </Transition>
       </div>
+
+      <ToastContainer limit={1} />
 
       <div
         className="w-full h-full flex flex-col justify-center p-4
